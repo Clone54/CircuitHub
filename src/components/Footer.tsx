@@ -85,11 +85,11 @@ export default function Footer() {
             </div>
             <div className="flex items-center gap-2">
               <Phone className="h-3.5 w-3.5 text-emerald-accent" />
-              <span>+1 (555) 019-2104</span>
+              <span>+8801871528249</span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="h-3.5 w-3.5 text-emerald-accent" />
-              <span>EEE Engineering Dept, Labs Block B</span>
+              <span>Jhargram-6596, Bagmara, Rajshahi</span>
             </div>
           </div>
         </div>
