@@ -80,7 +80,7 @@ async function generateContentWithFallback(params: any): Promise<any> {
         err.message?.includes('overloaded');
 
       if (isRecoverableError) {
-        console.warn(`[Gemini API] Model ${model} failed due to quota/rate limit or high demand. Trying next available model...`);
+        console.log(`[Gemini API] Model ${model} failed due to quota/rate limit or high demand. Trying next available model...`);
         continue;
       } else {
         console.error(`[Gemini API] Model ${model} failed with unrecoverable error:`, err);
@@ -650,7 +650,7 @@ You MUST respond in a strict JSON format matching this schema:
       // Fallback response for offline or missing API Key situations so the app remains interactive & premium
       res.json({
         isMocked: true,
-        summary: 'Analyzed Component Overview: A versatile high-gain silicon semiconductor device optimized for power amplification, logic coupling, and oscillator integration in EEE-2104 lab simulations.',
+        summary: 'Analyzed Component Overview: A versatile high-gain silicon semiconductor device optimized for power amplification, logic coupling, and oscillator integration in EEE lab simulations.',
         pinout: [
           { pin: 'Pin 1', name: 'OUT A / VOUT', description: 'Primary output node for Stage A amplifier loop' },
           { pin: 'Pin 2', name: 'IN A- / IN-', description: 'Inverting input node for closed-loop gain adjustments' },
@@ -671,7 +671,7 @@ You MUST respond in a strict JSON format matching this schema:
         applications: [
           'High-precision low-frequency voltage comparator arrays',
           'Astable wave generator feedback loops (555 coupled)',
-          'Active Butterworth bandpass filtering (EEE-2104 compliant)'
+          'Active Butterworth bandpass filtering (EEE compliant)'
         ],
         warning: err.message.includes('GEMINI_API_KEY') ? 'Demo mode loaded because GEMINI_API_KEY is not configured in Secrets.' : undefined
       });
@@ -679,7 +679,7 @@ You MUST respond in a strict JSON format matching this schema:
   });
 
 
-  // --- AI FEATURE 2: CONTEXT-AWARE CHAT ASSISTANT (EEE-2104 Circuit Assistant) ---
+  // --- AI FEATURE 2: CONTEXT-AWARE CHAT ASSISTANT (EEE Circuit Assistant) ---
   app.post('/api/chat', async (req, res) => {
     const { message, history } = req.body;
     if (!message) {
@@ -693,14 +693,7 @@ You MUST respond in a strict JSON format matching this schema:
       const conversationHistory = Array.isArray(history) 
         ? history.map((h: any) => `${h.role === 'user' ? 'User' : 'Assistant'}: ${h.content}`).join('\n')
         : '';
-      const systemInstruction = `You are an expert University-level Electrical and Electronic Engineering Tutor. Your expertise covers:
-1. Circuit Theory: Ohm's Law, KVL, KCL, Thevenin/Norton theorems, Node/Mesh analysis, Phasors, and Resonance.
-2. Analog Electronics: Diode clippers/clampers, BJT/MOSFET biasing and small-signal AC analysis, Multistage amplifiers, Op-Amp applications (Integrators, Differentiators, Active Filters), and Oscillators.
-3. Digital Electronics: Boolean algebra, K-Maps, Combinational logic (Multiplexers, Encoders), Sequential logic (Flip-flops, Counters), and ADC/DAC architectures.
-4. Electromagnetics: Maxwell's equations and waveguide mechanics.
-5. Machines I: Transformer equivalent circuits and DC machine characteristics.
-6. Instrumentation: AC/DC Bridges, LVDT, Strain Gauges, and signal conditioning.
-7. VLSI: MOSFET delay, CMOS fabrication steps, and dynamic power dissipation.
+      const systemInstruction = `You are an expert University-level Electrical and Electronic Engineering Tutor. Your expertise covers all subjects within the entire Electrical and Electronic Engineering (EEE) curriculum, including but not limited to Circuit Theory, Analog and Digital Electronics, Electromagnetics, Power Systems, Machines, Control Systems, Telecommunications, Signal Processing, and VLSI. Answer dynamically based on whatever the user needs within the EEE domain.
 
 When answering, provide step-by-step mathematical derivations where applicable. Do not answer questions outside of electrical engineering, computer science, or physics. Keep responses concise, clear, and highly educational.
 
@@ -735,7 +728,7 @@ Offer 2 suggested follow-up questions at the very end of your response, separate
       console.error('Chat Assistant failed:', err);
 
       // Highly context-aware mock response in case of API Key failure
-      let responseText = `I am happy to assist you with EEE-2104 circuit analysis, Electromagnetics, Machines, Instrumentation, and VLSI! 
+      let responseText = `I am happy to assist you with EEE circuit analysis, Electromagnetics, Machines, Instrumentation, and VLSI! 
 
 To calculate the frequency and duty cycle of a **555 Timer Astable Circuit**, use these standard formulas:
 - **Frequency (f)**: f = 1.44 / ((RA + 2*RB) * C)
@@ -752,7 +745,7 @@ How can I help you design or troubleshoot your circuit board further today?
 [SUGGESTION: What is the gain formula of an inverting active filter?]`;
 
       if (message.toLowerCase().includes('op') || message.toLowerCase().includes('amplifier') || message.toLowerCase().includes('gain')) {
-        responseText = `In EEE-2104, an **Operational Amplifier (Op-Amp)** is analyzed using two golden rules for ideal op-amps:
+        responseText = `In EEE, an **Operational Amplifier (Op-Amp)** is analyzed using two golden rules for ideal op-amps:
 1. **Infinite Input Impedance**: No current flows into the inverting (V-) or non-inverting (V+) input terminals (I+ = I- = 0).
 2. **Virtual Short Circuit**: Under negative feedback, the op-amp will force the input terminal voltages to be equal (V+ = V-).
 

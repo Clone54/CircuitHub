@@ -8,7 +8,7 @@ export default function ChatAssistant() {
     {
       id: 'init',
       role: 'assistant',
-      content: "Hello! I am your EEE-2104 Circuit Engineering Tutor. Ask me any questions about operational amplifiers, 555 timer frequencies, waveform calculations, or RLC bandpass filters!",
+      content: "Hello! I am your Electrical and Electronic Engineering (EEE) Tutor. Ask me any questions about operational amplifiers, 555 timer frequencies, waveform calculations, or RLC bandpass filters!",
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -141,7 +141,7 @@ export default function ChatAssistant() {
         <button
           onClick={() => setIsOpen(true)}
           className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-accent text-navy-dark shadow-lg shadow-emerald-accent/20 hover:scale-105 active:scale-95 transition-all cursor-pointer group border border-emerald-accent/40"
-          title="Open EEE-2104 Chat Assistant"
+          title="Open EEE Chat Assistant"
         >
           <Sparkles className="h-6 w-6 animate-pulse group-hover:rotate-12 transition-transform" />
           <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-navy-dark text-[10px] font-bold text-emerald-accent border border-emerald-accent/50">
@@ -163,7 +163,7 @@ export default function ChatAssistant() {
                 <h4 className="text-sm font-bold font-display text-white">Circuit Tutor</h4>
                 <div className="flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-accent animate-ping" />
-                  <span className="text-[10px] text-slate-400 font-medium">EEE-2104 Lab Expert</span>
+                  <span className="text-[10px] text-slate-400 font-medium">EEE Expert Tutor</span>
                 </div>
               </div>
             </div>
