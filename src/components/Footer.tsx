@@ -17,17 +17,14 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-xs leading-relaxed text-slate-400">
-              An intelligent, production-grade learning hub and tool suite designed for electronics engineers, circuit designers, and EEE-2104 university scholars.
+              An intelligent, production-grade learning hub and tool suite designed for electronics engineers, circuit designers, and EEE university scholars.
             </p>
             <div className="flex gap-3 pt-2">
-              <a href="https://github.com" target="_blank" rel="noreferrer" className="p-1.5 rounded bg-navy-light/40 hover:text-emerald-accent hover:bg-navy-light/80 transition-colors">
+              <a href="https://github.com/Clone54" target="_blank" rel="noreferrer" className="p-1.5 rounded bg-navy-light/40 hover:text-emerald-accent hover:bg-navy-light/80 transition-colors">
                 <Github className="h-4 w-4" />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="p-1.5 rounded bg-navy-light/40 hover:text-emerald-accent hover:bg-navy-light/80 transition-colors">
+              <a href="https://linkedin.com/in/firoz-ahmed44" target="_blank" rel="noreferrer" className="p-1.5 rounded bg-navy-light/40 hover:text-emerald-accent hover:bg-navy-light/80 transition-colors">
                 <Linkedin className="h-4 w-4" />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="p-1.5 rounded bg-navy-light/40 hover:text-emerald-accent hover:bg-navy-light/80 transition-colors">
-                <Twitter className="h-4 w-4" />
               </a>
             </div>
           </div>

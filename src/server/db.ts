@@ -132,7 +132,7 @@ function getSeedComponents(): ComponentItem[] {
       id: 'lm358',
       title: 'LM358 Operational Amplifier',
       description: 'Highly versatile, industry-standard dual operational amplifier designed for single-supply operation.',
-      fullDescription: 'The LM358 consists of two independent, high-gain, internally frequency compensated operational amplifiers designed specifically to operate from a single power supply over a wide range of voltages. Operation from split power supplies is also possible, and the low power supply current drain is independent of the magnitude of the power supply voltage. This operational amplifier is exceptionally suited for EEE-2104 active filters, DC gain blocks, and general signal amplification circuits.',
+      fullDescription: 'The LM358 consists of two independent, high-gain, internally frequency compensated operational amplifiers designed specifically to operate from a single power supply over a wide range of voltages. Operation from split power supplies is also possible, and the low power supply current drain is independent of the magnitude of the power supply voltage. This operational amplifier is exceptionally suited for EEE active filters, DC gain blocks, and general signal amplification circuits.',
       category: 'Analog IC',
       imageUrl: 'https://images.unsplash.com/photo-1517055727180-d5a0cd2e1960?auto=format&fit=crop&w=600&q=80',
       rating: 4.8,
@@ -170,7 +170,7 @@ function getSeedComponents(): ComponentItem[] {
       id: 'ne5532',
       title: 'NE5532 Dual Low-Noise Op-Amp',
       description: 'High-performance operational amplifier combining outstanding DC and AC audio qualities.',
-      fullDescription: 'The NE5532 is a high-performance operational amplifier combining excellent DC and AC characteristics. It features very low noise, high output-drive capability, high unity-gain and maximum-output-oscillation bandwidths, low distortion, high slew rate, input-protection diodes, and output short-circuit protection. It is highly recommended for professional and high-quality audio equipment, instrumentation and control circuits, and EEE-2104 active bandpass filters.',
+      fullDescription: 'The NE5532 is a high-performance operational amplifier combining excellent DC and AC characteristics. It features very low noise, high output-drive capability, high unity-gain and maximum-output-oscillation bandwidths, low distortion, high slew rate, input-protection diodes, and output short-circuit protection. It is highly recommended for professional and high-quality audio equipment, instrumentation and control circuits, and EEE active bandpass filters.',
       category: 'Analog IC',
       imageUrl: 'https://images.unsplash.com/photo-1591405351990-4726e33df58d?auto=format&fit=crop&w=600&q=80',
       rating: 4.7,
@@ -253,7 +253,7 @@ function getSeedReviews(): Review[] {
       userName: 'Firoz Ahmed',
       userEmail: 'firozahmedskt1@gmail.com',
       rating: 5,
-      comment: 'Absolutely essential for the active high-pass filter design in my EEE-2104 lab. Works perfectly and has broad simulation support.',
+      comment: 'Absolutely essential for the active high-pass filter design in my EEE lab. Works perfectly and has broad simulation support.',
       createdAt: '2026-06-15T14:30:00.000Z'
     },
     {
