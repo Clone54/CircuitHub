@@ -23,7 +23,7 @@ export default function Footer() {
               <a href="https://github.com/Clone54" target="_blank" rel="noreferrer" className="p-1.5 rounded bg-navy-light/40 hover:text-emerald-accent hover:bg-navy-light/80 transition-colors">
                 <Github className="h-4 w-4" />
               </a>
-              <a href="https://linkedin.com/in/firoz-ahmed44" target="_blank" rel="noreferrer" className="p-1.5 rounded bg-navy-light/40 hover:text-emerald-accent hover:bg-navy-light/80 transition-colors">
+              <a href="https://linkedin.com/in/firoz-ahmed88" target="_blank" rel="noreferrer" className="p-1.5 rounded bg-navy-light/40 hover:text-emerald-accent hover:bg-navy-light/80 transition-colors">
                 <Linkedin className="h-4 w-4" />
               </a>
             </div>
