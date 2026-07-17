@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "ComponentItem": {
+      "title": "ComponentItem",
+      "description": "A semiconductor component or circuit spec sheet",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 3, "maxLength": 100 },
+        "description": { "type": "string", "minLength": 10, "maxLength": 500 },
+        "fullDescription": { "type": "string", "minLength": 20, "maxLength": 3000 },
+        "category": { "type": "string", "minLength": 3, "maxLength": 50 },
+        "imageUrl": { "type": "string", "maxLength": 1000 },
+        "creatorId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "rating": { "type": "number" }
+      },
+      "required": ["title", "description", "fullDescription", "category", "creatorId", "createdAt"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "A student review or feedback for a component",
+      "type": "object",
+      "properties": {
+        "componentId": { "type": "string", "maxLength": 128 },
+        "userName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "userEmail": { "type": "string", "minLength": 3, "maxLength": 100 },
+        "rating": { "type": "number" },
+        "comment": { "type": "string", "minLength": 2, "maxLength": 1000 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["componentId", "userName", "userEmail", "rating", "comment", "createdAt"]
+    },
+    "PlatformStat": {
+      "title": "PlatformStat",
+      "description": "Monthly platform growth and interaction stats",
+      "type": "object",
+      "properties": {
+        "month": { "type": "string", "maxLength": 20 },
+        "ActiveUsers": { "type": "number" },
+        "ComponentScans": { "type": "number" },
+        "Queries": { "type": "number" },
+        "order": { "type": "number" }
+      },
+      "required": ["month", "ActiveUsers", "ComponentScans", "Queries", "order"]
+    },
+    "FAQItem": {
+      "title": "FAQItem",
+      "description": "Frequently Asked Questions",
+      "type": "object",
+      "properties": {
+        "q": { "type": "string", "maxLength": 500 },
+        "a": { "type": "string", "maxLength": 2000 },
+        "order": { "type": "number" }
+      },
+      "required": ["q", "a", "order"]
+    },
+    "TestimonialItem": {
+      "title": "TestimonialItem",
+      "description": "Engineering student or educator reviews and testimonials",
+      "type": "object",
+      "properties": {
+        "quote": { "type": "string", "maxLength": 1000 },
+        "authorName": { "type": "string", "maxLength": 100 },
+        "authorRole": { "type": "string", "maxLength": 100 },
+        "initials": { "type": "string", "maxLength": 10 },
+        "order": { "type": "number" }
+      },
+      "required": ["quote", "authorName", "authorRole", "initials", "order"]
+    }
+  },
+  "firestore": {
+    "components/{componentId}": {
+      "schema": "ComponentItem",
+      "description": "Semiconductor components master list"
+    },
+    "reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "Reviews on semiconductor components"
+    },
+    "platformStats/{statId}": {
+      "schema": "PlatformStat",
+      "description": "Platform interaction volume statistics"
+    },
+    "faqs/{faqId}": {
+      "schema": "FAQItem",
+      "description": "Frequently Asked Questions for CircuitHub"
+    },
+    "testimonials/{testimonialId}": {
+      "schema": "TestimonialItem",
+      "description": "Testimonials and engineering reviews for CircuitHub"
+    }
+  }
+}

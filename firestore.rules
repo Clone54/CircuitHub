@@ -1,0 +1,165 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitive Global Helpers (Phase 3)
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    
+    function isSignedIn() { 
+      return request.auth != null; 
+    }
+    
+    function incoming() { 
+      return request.resource.data; 
+    }
+    
+    function existing() { 
+      return resource.data; 
+    }
+
+    // Helper to check if user owns/created the document
+    function isOwner(creatorId) {
+      return isSignedIn() && creatorId == request.auth.uid;
+    }
+
+    // Entity validation blueprints (Phase 4, Pillar 2)
+    function isValidComponentItem(data) {
+      return data.title is string && data.title.size() >= 3 && data.title.size() <= 100
+        && data.description is string && data.description.size() >= 10 && data.description.size() <= 500
+        && data.fullDescription is string && data.fullDescription.size() >= 20 && data.fullDescription.size() <= 3000
+        && data.category is string && data.category.size() >= 3 && data.category.size() <= 50
+        && data.creatorId is string && data.creatorId.size() <= 128
+        && data.createdAt is string && data.createdAt.size() <= 64
+        && (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 1000))
+        && (!('specs' in data) || (data.specs is list && data.specs.size() <= 50))
+        && (!('rating' in data) || (data.rating is number));
+    }
+
+    function isValidReview(data) {
+      return data.componentId is string && data.componentId.size() <= 128
+        && data.userName is string && data.userName.size() >= 1 && data.userName.size() <= 100
+        && data.userEmail is string && data.userEmail.size() >= 3 && data.userEmail.size() <= 100
+        && data.rating is number && data.rating >= 1 && data.rating <= 5
+        && data.comment is string && data.comment.size() >= 2 && data.comment.size() <= 1000
+        && data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    function isValidPlatformStat(data) {
+      return data.month is string && data.month.size() <= 20
+        && data.ActiveUsers is number
+        && data.ComponentScans is number
+        && data.Queries is number
+        && data.order is number;
+    }
+
+    function isValidFAQItem(data) {
+      return data.q is string && data.q.size() <= 500
+        && data.a is string && data.a.size() <= 2000
+        && data.order is number;
+    }
+
+    function isValidTestimonialItem(data) {
+      return data.quote is string && data.quote.size() <= 1000
+        && data.authorName is string && data.authorName.size() <= 100
+        && data.authorRole is string && data.authorRole.size() <= 100
+        && data.initials is string && data.initials.size() <= 10
+        && data.order is number;
+    }
+
+    function isValidThesisChapter(data) {
+      return data.title is string && data.title.size() <= 300
+        && data.bullets is string
+        && data.status is string
+        && data.draftContent is string
+        && data.userId is string && data.userId.size() <= 128
+        && (!('createdAt' in data) || data.createdAt is string);
+    }
+
+    // 1. Components Collection Match Block
+    match /components/{componentId} {
+      // Allow gets publicly, and lists
+      allow read: if true;
+
+      // Allow authenticated creation of components, or seeding of system components
+      allow create: if isValidId(componentId)
+        && isValidComponentItem(incoming())
+        && (incoming().creatorId == 'system' || (isSignedIn() && incoming().creatorId == request.auth.uid));
+
+      // Action-Based Update Pattern (Phase 4, Pillar 5)
+      allow update: if isSignedIn()
+        && isOwner(existing().creatorId)
+        && isValidComponentItem(incoming())
+        && incoming().creatorId == existing().creatorId
+        && incoming().createdAt == existing().createdAt
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'fullDescription', 'category', 'imageUrl', 'specs', 'rating']);
+
+      // Only the owner can delete the component
+      allow delete: if isSignedIn() && isOwner(existing().creatorId);
+    }
+
+    // 2. Reviews Collection Match Block
+    match /reviews/{reviewId} {
+      // Allow gets publicly, and lists
+      allow read: if true;
+
+      // Allow authenticated creation of reviews
+      allow create: if isSignedIn()
+        && isValidId(reviewId)
+        && isValidReview(incoming())
+        && exists(/databases/$(database)/documents/components/$(incoming().componentId));
+
+      // Allow update for owners of the review only
+      allow update: if isSignedIn()
+        && existing().userEmail == request.auth.token.email
+        && isValidReview(incoming())
+        && incoming().componentId == existing().componentId
+        && incoming().userEmail == existing().userEmail
+        && incoming().diff(existing()).affectedKeys().hasOnly(['rating', 'comment']);
+
+      // Delete allowed if owner of review or owner of the component
+      allow delete: if isSignedIn() 
+        && (existing().userEmail == request.auth.token.email 
+            || (exists(/databases/$(database)/documents/components/$(existing().componentId)) 
+                && get(/databases/$(database)/documents/components/$(existing().componentId)).data.creatorId == request.auth.uid));
+    }
+
+    // 3. PlatformStats Collection Match Block
+    match /platformStats/{statId} {
+      allow read: if true;
+      allow write: if isSignedIn() || (incoming() != null && ('creatorId' in incoming() && incoming().creatorId == 'system'));
+    }
+
+    // 4. FAQs Collection Match Block
+    match /faqs/{faqId} {
+      allow read: if true;
+      allow write: if isSignedIn() || (incoming() != null && ('creatorId' in incoming() && incoming().creatorId == 'system'));
+    }
+
+    // 5. Testimonials Collection Match Block
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow write: if isSignedIn() || (incoming() != null && ('creatorId' in incoming() && incoming().creatorId == 'system'));
+    }
+
+    // 6. Thesis Chapters Collection Match Block
+    match /thesisChapters/{chapterId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() 
+        && isValidThesisChapter(incoming())
+        && incoming().userId == request.auth.uid;
+      allow update: if isSignedIn()
+        && isOwner(existing().userId)
+        && isValidThesisChapter(incoming())
+        && incoming().userId == existing().userId
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'bullets', 'status', 'draftContent']);
+      allow delete: if isSignedIn() && isOwner(existing().userId);
+    }
+  }
+}
