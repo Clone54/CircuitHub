@@ -46,7 +46,9 @@ async function generateContentWithFallback(params: any): Promise<any> {
   const modelsToTry = [
     params.model || 'gemini-3.5-flash',
     'gemini-3.1-flash-lite',
-    'gemini-3.5-flash',
+    'gemini-2.5-flash',
+    'gemini-1.5-flash',
+    'gemini-1.5-flash-8b',
   ];
 
   // Deduplicate array while preserving preference order
@@ -63,19 +65,25 @@ async function generateContentWithFallback(params: any): Promise<any> {
       return response;
     } catch (err: any) {
       lastError = err;
-      const isQuotaOrLimitError = 
+      const isRecoverableError = 
         err.status === 429 || 
+        err.status === 503 || 
+        err.status === 500 || 
+        err.status === 404 ||
         err.message?.includes('429') || 
+        err.message?.includes('503') || 
         err.message?.includes('RESOURCE_EXHAUSTED') || 
         err.message?.includes('Quota exceeded') ||
         err.message?.includes('quota') ||
-        err.message?.includes('limit');
+        err.message?.includes('limit') ||
+        err.message?.includes('high demand') ||
+        err.message?.includes('overloaded');
 
-      if (isQuotaOrLimitError) {
-        console.warn(`[Gemini API] Model ${model} failed due to quota limit or rate limiting. Trying next available model...`);
+      if (isRecoverableError) {
+        console.warn(`[Gemini API] Model ${model} failed due to quota/rate limit or high demand. Trying next available model...`);
         continue;
       } else {
-        console.error(`[Gemini API] Model ${model} failed with non-quota/rate-limit error:`, err);
+        console.error(`[Gemini API] Model ${model} failed with unrecoverable error:`, err);
         throw err;
       }
     }
