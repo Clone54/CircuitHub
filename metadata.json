@@ -1,0 +1,6 @@
+{
+  "name": "AI-Powered Electronics & Circuit Hub",
+  "description": "A comprehensive hub for circuit design, component specifications, datasheet analysis, and an AI engineering assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
