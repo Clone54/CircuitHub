@@ -63,11 +63,7 @@ export default function DetailsView({ components, user, onReviewAdded }: Details
               userName: 'Firoz Ahmed',
               userEmail: 'firozahmedskt1@gmail.com',
               rating: 5,
-<<<<<<< HEAD
               comment: `Perfect for EEE lab assignments! Correct pin configuration and linear voltage ratios. Highly recommended reference.`,
-=======
-              comment: `Perfect for EEE-2104 lab assignments! Correct pin configuration and linear voltage ratios. Highly recommended reference.`,
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
               createdAt: new Date().toISOString()
             }
           ]);

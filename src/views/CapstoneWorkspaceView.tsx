@@ -30,10 +30,7 @@ export default function CapstoneWorkspaceView() {
   
   // Modal / Form state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-<<<<<<< HEAD
   const [isSaving, setIsSaving] = useState<boolean>(false);
-=======
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
   const [editingChapter, setEditingChapter] = useState<ThesisChapter | null>(null);
   const [title, setTitle] = useState<string>('');
   const [bullets, setBullets] = useState<string>('');
@@ -106,10 +103,7 @@ export default function CapstoneWorkspaceView() {
     const userId = auth.currentUser?.uid;
     if (!userId) return navigate('/login');
 
-<<<<<<< HEAD
     setIsSaving(true);
-=======
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
     const chapterData = {
       title,
       bullets,
@@ -138,11 +132,8 @@ export default function CapstoneWorkspaceView() {
     } catch (err) {
       console.error("Save Error:", err);
       setError('Error communicating with server.');
-<<<<<<< HEAD
     } finally {
       setIsSaving(false);
-=======
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
     }
   };
 
@@ -701,7 +692,6 @@ export default function CapstoneWorkspaceView() {
                 </button>
                 <button
                   type="submit"
-<<<<<<< HEAD
                   disabled={isSaving}
                   className="px-5 py-2.5 rounded-xl bg-emerald-accent text-navy-dark hover:bg-emerald-accent/90 text-xs sm:text-sm font-bold transition-all shadow-lg hover:shadow-emerald-accent/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
                 >
@@ -711,11 +701,6 @@ export default function CapstoneWorkspaceView() {
                       Saving...
                     </>
                   ) : editingChapter ? 'Save Changes' : 'Create Chapter'}
-=======
-                  className="px-5 py-2.5 rounded-xl bg-emerald-accent text-navy-dark hover:bg-emerald-accent/90 text-xs sm:text-sm font-bold transition-all shadow-lg hover:shadow-emerald-accent/10"
-                >
-                  {editingChapter ? 'Save Changes' : 'Create Chapter'}
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
                 </button>
               </div>
 

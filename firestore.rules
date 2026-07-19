@@ -158,11 +158,7 @@ service cloud.firestore {
         && isOwner(existing().userId)
         && isValidThesisChapter(incoming())
         && incoming().userId == existing().userId
-<<<<<<< HEAD
         && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'bullets', 'status', 'draftContent', 'userId', 'createdAt']);
-=======
-        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'bullets', 'status', 'draftContent']);
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
       allow delete: if isSignedIn() && isOwner(existing().userId);
     }
   }

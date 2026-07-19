@@ -93,21 +93,12 @@ export default function HomeView({ components, stats, faqs, testimonials }: Home
           </div>
 
           <h1 className="font-display text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
-<<<<<<< HEAD
             Master the Entire EEE Curriculum <br />
             With <span className="text-emerald-accent bg-emerald-accent/5 px-2 py-0.5 rounded border border-emerald-accent/20">Agentic AI</span> & Live Solvers
           </h1>
 
           <p className="text-sm sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
             The premium workspace featuring comprehensive tools for Control Systems, DSP, Power Systems, Telecommunications, VLSI, and interactive circuit simulations.
-=======
-            Accelerate Your Circuit Design <br />
-            With <span className="text-emerald-accent bg-emerald-accent/5 px-2 py-0.5 rounded border border-emerald-accent/20">Agentic AI</span> specifications
-          </h1>
-
-          <p className="text-sm sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            The premium workspace for operational amplifiers, 555 precision timing, active filter simulations, and instant PDF datasheet intelligence.
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 pt-4">
@@ -164,11 +155,7 @@ export default function HomeView({ components, stats, faqs, testimonials }: Home
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-accent/10 border border-emerald-accent/20">
               <Award className="h-6 w-6 text-emerald-accent" />
             </div>
-<<<<<<< HEAD
             <h3 className="font-display text-lg font-bold text-white">Entire EEE Curriculum Aligned</h3>
-=======
-            <h3 className="font-display text-lg font-bold text-white">EEE-2104 Lab Aligned</h3>
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
             <p className="text-xs leading-relaxed text-slate-400">
               All tools, equations, and interactive prompts are calibrated specifically to standard laboratory curriculum of major engineering colleges.
             </p>
@@ -527,11 +514,7 @@ export default function HomeView({ components, stats, faqs, testimonials }: Home
           {(testimonials && testimonials.length > 0 ? testimonials : [
             {
               id: 'test1',
-<<<<<<< HEAD
               quote: '"CircuitHub has completely saved my EEE university exams. The op-amp gain and active filter calculations are accurate and help us double-check physical lab board parameters."',
-=======
-              quote: '"CircuitHub has completely saved my EEE-2104 university exams. The op-amp gain and active filter calculations are accurate and help us double-check physical lab board parameters."',
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
               authorName: 'Ananya Rao',
               authorRole: 'EEE Student, Section B',
               initials: 'AR'

@@ -166,11 +166,7 @@ export default function ContactView() {
               <label className="text-slate-400 font-semibold block">Message / Detailed inquiry</label>
               <textarea
                 required
-<<<<<<< HEAD
                 placeholder="Specify your EEE node analysis question or datasheet analysis problems..."
-=======
-                placeholder="Specify your EEE-2104 node analysis question or datasheet analysis problems..."
->>>>>>> 6183e3e30f0dad1b928ff0629653d32a42b17d0c
                 rows={5}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
