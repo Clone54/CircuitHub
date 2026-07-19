@@ -28,20 +28,7 @@ export default function ContactView() {
 
     setLoading(true);
 
-    const phone = "8801871528249";
-    const whatsappMessage = `*New Inquiry / Feedback*
-
-*Name:* ${name}
-*Email:* ${email}
-*Subject:* ${subject}
-
-*Message:*
-${message}`;
-
-    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`;
-    window.open(whatsappUrl, "_blank");
-
-    // Simulate success feedback
+    // Simulate sending contact message
     setTimeout(() => {
       setLoading(false);
       setSuccess(true);
@@ -73,7 +60,7 @@ ${message}`;
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-
+        
         {/* Left Column: Direct contact info */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-navy-card border border-navy-light p-6 rounded-2xl space-y-4">
@@ -95,7 +82,7 @@ ${message}`;
                 <Phone className="h-5 w-5 text-emerald-accent shrink-0" />
                 <div>
                   <span className="font-bold text-slate-200 block">Telephone Inquiry</span>
-                  <span className="text-slate-400">+8801871528249</span>
+                  <span className="text-slate-400">+1 (555) 019-2104</span>
                 </div>
               </div>
 
@@ -103,7 +90,7 @@ ${message}`;
                 <MapPin className="h-5 w-5 text-emerald-accent shrink-0" />
                 <div>
                   <span className="font-bold text-slate-200 block">Physical Laboratory Space</span>
-                  <span className="text-slate-400">Jhargram-6596, Bagmara, Rajshahi</span>
+                  <span className="text-slate-400">EEE Department, Lab Annex Block B, Room 210</span>
                 </div>
               </div>
             </div>
@@ -130,7 +117,7 @@ ${message}`;
 
           <form onSubmit={handleFormSubmit} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
+              
               {/* Name */}
               <div className="space-y-1.5">
                 <label className="text-slate-400 font-semibold block">Your Name</label>
@@ -197,7 +184,9 @@ ${message}`;
             </button>
           </form>
         </div>
+
       </div>
+
     </div>
   );
 }

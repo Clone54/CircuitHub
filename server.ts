@@ -44,7 +44,7 @@ async function generateContentWithFallback(params: any): Promise<any> {
   
   // Set up sequential fallback models. Each model on the free tier has its own independent rate limit/quota.
   const modelsToTry = [
-    params.model || 'gemini-3.5-flash',
+    params.model || 'gemini-2.5-flash',
     'gemini-3.1-flash-lite',
     'gemini-2.5-flash',
     'gemini-1.5-flash',
@@ -65,25 +65,19 @@ async function generateContentWithFallback(params: any): Promise<any> {
       return response;
     } catch (err: any) {
       lastError = err;
-      const isRecoverableError = 
+      const isQuotaOrLimitError = 
         err.status === 429 || 
-        err.status === 503 || 
-        err.status === 500 || 
-        err.status === 404 ||
         err.message?.includes('429') || 
-        err.message?.includes('503') || 
         err.message?.includes('RESOURCE_EXHAUSTED') || 
         err.message?.includes('Quota exceeded') ||
         err.message?.includes('quota') ||
-        err.message?.includes('limit') ||
-        err.message?.includes('high demand') ||
-        err.message?.includes('overloaded');
+        err.message?.includes('limit');
 
-      if (isRecoverableError) {
-        console.log(`[Gemini API] Model ${model} failed due to quota/rate limit or high demand. Trying next available model...`);
+      if (isQuotaOrLimitError) {
+        console.warn(`[Gemini API] Model ${model} failed due to quota limit or rate limiting. Trying next available model...`);
         continue;
       } else {
-        console.error(`[Gemini API] Model ${model} failed with unrecoverable error:`, err);
+        console.error(`[Gemini API] Model ${model} failed with non-quota/rate-limit error:`, err);
         throw err;
       }
     }
@@ -596,7 +590,7 @@ You MUST respond in a strict JSON format matching this schema:
 }`;
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: `Analyze the following datasheet information and return the structured JSON data as requested in system instructions:\n\n${documentContent}`,
         config: {
           systemInstruction,
@@ -650,7 +644,7 @@ You MUST respond in a strict JSON format matching this schema:
       // Fallback response for offline or missing API Key situations so the app remains interactive & premium
       res.json({
         isMocked: true,
-        summary: 'Analyzed Component Overview: A versatile high-gain silicon semiconductor device optimized for power amplification, logic coupling, and oscillator integration in EEE lab simulations.',
+        summary: 'Analyzed Component Overview: A versatile high-gain silicon semiconductor device optimized for power amplification, logic coupling, and oscillator integration in EEE-2104 lab simulations.',
         pinout: [
           { pin: 'Pin 1', name: 'OUT A / VOUT', description: 'Primary output node for Stage A amplifier loop' },
           { pin: 'Pin 2', name: 'IN A- / IN-', description: 'Inverting input node for closed-loop gain adjustments' },
@@ -671,7 +665,7 @@ You MUST respond in a strict JSON format matching this schema:
         applications: [
           'High-precision low-frequency voltage comparator arrays',
           'Astable wave generator feedback loops (555 coupled)',
-          'Active Butterworth bandpass filtering (EEE compliant)'
+          'Active Butterworth bandpass filtering (EEE-2104 compliant)'
         ],
         warning: err.message.includes('GEMINI_API_KEY') ? 'Demo mode loaded because GEMINI_API_KEY is not configured in Secrets.' : undefined
       });
@@ -679,7 +673,7 @@ You MUST respond in a strict JSON format matching this schema:
   });
 
 
-  // --- AI FEATURE 2: CONTEXT-AWARE CHAT ASSISTANT (EEE Circuit Assistant) ---
+  // --- AI FEATURE 2: CONTEXT-AWARE CHAT ASSISTANT (EEE-2104 Circuit Assistant) ---
   app.post('/api/chat', async (req, res) => {
     const { message, history } = req.body;
     if (!message) {
@@ -693,7 +687,14 @@ You MUST respond in a strict JSON format matching this schema:
       const conversationHistory = Array.isArray(history) 
         ? history.map((h: any) => `${h.role === 'user' ? 'User' : 'Assistant'}: ${h.content}`).join('\n')
         : '';
-      const systemInstruction = `You are an expert University-level Electrical and Electronic Engineering Tutor. Your expertise covers all subjects within the entire Electrical and Electronic Engineering (EEE) curriculum, including but not limited to Circuit Theory, Analog and Digital Electronics, Electromagnetics, Power Systems, Machines, Control Systems, Telecommunications, Signal Processing, and VLSI. Answer dynamically based on whatever the user needs within the EEE domain.
+      const systemInstruction = `You are an expert University-level Electrical and Electronic Engineering Tutor. Your expertise covers:
+1. Circuit Theory: Ohm's Law, KVL, KCL, Thevenin/Norton theorems, Node/Mesh analysis, Phasors, and Resonance.
+2. Analog Electronics: Diode clippers/clampers, BJT/MOSFET biasing and small-signal AC analysis, Multistage amplifiers, Op-Amp applications (Integrators, Differentiators, Active Filters), and Oscillators.
+3. Digital Electronics: Boolean algebra, K-Maps, Combinational logic (Multiplexers, Encoders), Sequential logic (Flip-flops, Counters), and ADC/DAC architectures.
+4. Electromagnetics: Maxwell's equations and waveguide mechanics.
+5. Machines I: Transformer equivalent circuits and DC machine characteristics.
+6. Instrumentation: AC/DC Bridges, LVDT, Strain Gauges, and signal conditioning.
+7. VLSI: MOSFET delay, CMOS fabrication steps, and dynamic power dissipation.
 
 When answering, provide step-by-step mathematical derivations where applicable. Do not answer questions outside of electrical engineering, computer science, or physics. Keep responses concise, clear, and highly educational.
 
@@ -714,7 +715,7 @@ Offer 2 suggested follow-up questions at the very end of your response, separate
       const ai = getGeminiClient();
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction,
@@ -728,7 +729,7 @@ Offer 2 suggested follow-up questions at the very end of your response, separate
       console.error('Chat Assistant failed:', err);
 
       // Highly context-aware mock response in case of API Key failure
-      let responseText = `I am happy to assist you with EEE circuit analysis, Electromagnetics, Machines, Instrumentation, and VLSI! 
+      let responseText = `I am happy to assist you with EEE-2104 circuit analysis, Electromagnetics, Machines, Instrumentation, and VLSI! 
 
 To calculate the frequency and duty cycle of a **555 Timer Astable Circuit**, use these standard formulas:
 - **Frequency (f)**: f = 1.44 / ((RA + 2*RB) * C)
@@ -745,7 +746,7 @@ How can I help you design or troubleshoot your circuit board further today?
 [SUGGESTION: What is the gain formula of an inverting active filter?]`;
 
       if (message.toLowerCase().includes('op') || message.toLowerCase().includes('amplifier') || message.toLowerCase().includes('gain')) {
-        responseText = `In EEE, an **Operational Amplifier (Op-Amp)** is analyzed using two golden rules for ideal op-amps:
+        responseText = `In EEE-2104, an **Operational Amplifier (Op-Amp)** is analyzed using two golden rules for ideal op-amps:
 1. **Infinite Input Impedance**: No current flows into the inverting (V-) or non-inverting (V+) input terminals (I+ = I- = 0).
 2. **Virtual Short Circuit**: Under negative feedback, the op-amp will force the input terminal voltages to be equal (V+ = V-).
 
@@ -824,7 +825,7 @@ These balance conditions are frequency-independent, making the Maxwell-Wien brid
       const ai = getGeminiClient();
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction,
@@ -1051,7 +1052,7 @@ You MUST respond in a strict JSON format matching this schema:
       const ai = getGeminiClient();
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: `Analyze this boolean expression and generate the CMOS layout data in JSON format: ${expression}`,
         config: {
           systemInstruction,
@@ -1133,7 +1134,7 @@ You MUST respond in a strict JSON format matching this schema:
       const slicedContent = pdfText.slice(0, 10000);
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: `You are an expert EEE Academic Research Reviewer. Read the following academic paper text excerpt and provide:
 1. Abstract: A short, concise summary of the paper's scope and contributions.
 2. Methodology: Explain the primary method, circuit design, or experimental approach used.
@@ -1221,7 +1222,7 @@ ${slicedContent}
       }
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: `You are an expert Electrical and Electronics Engineering Academic Advisor. Suggest 3 unique and creative capstone/seminar projects for a student who has the following profile:
 - Areas of Interest: ${interests.join(', ')}
 - Skill Level: ${skillLevel}
@@ -1367,7 +1368,7 @@ You MUST output a JSON response matching this exact schema:
       const ai = getGeminiClient();
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: `Design this FSM: ${prompt}`,
         config: {
           systemInstruction,
@@ -1409,7 +1410,7 @@ CRITICAL FORMATTING RULES:
       const ai = getGeminiClient();
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: `Given the vector field E = ${field}, calculate the ${operation} step-by-step.`,
         config: {
           systemInstruction,
@@ -1509,7 +1510,7 @@ Instructions:
 4. Output the thesis draft directly in standard markdown format.`;
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
       });
 
@@ -1546,7 +1547,7 @@ Instructions:
 3. Keep comments extremely comprehensive to explain internal register bits, registers (e.g. RCC, GPIOx_MODER, ODR, etc.) or PLC rungs.`;
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction,
@@ -1705,7 +1706,7 @@ Based on this load profile, provide:
 Return your response in a structured JSON schema.`;
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -1771,7 +1772,7 @@ Recommend the exact type of high-voltage or medium-voltage Circuit Breaker (e.g.
 Structure your recommendation in strict JSON for frontend mapping, specifying recommendedDevice, breakerType, relayTypes, technicalJustification, estimatedLifecycle, and specifications (an array of key parameters and values).`;
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction,
@@ -1859,7 +1860,7 @@ Your response MUST be a JSON object containing:
 4. "tags": string array of auto-generated categories/labels for the columns/task (e.g. ["Fault Classification", "Sensor Fusion", "Time-Series", "Anomaly Detection"]).`;
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction,
@@ -1975,7 +1976,7 @@ Your response MUST be a JSON object containing:
 
       const ai = getGeminiClient();
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction,
@@ -2061,7 +2062,7 @@ Your response MUST be a JSON object containing:
 
       const ai = getGeminiClient();
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction,
@@ -2136,7 +2137,7 @@ Your response MUST be a JSON object containing:
 
       const ai = getGeminiClient();
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction,
@@ -2303,7 +2304,7 @@ Output strict JSON with the following keys:
 
       const ai = getGeminiClient();
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -2347,7 +2348,7 @@ ${JSON.stringify(pinMap, null, 2)}
 Provide ONLY the code, ready to be copy-pasted, with helpful comments. Use the standard framework (Arduino for Uno/ESP32, HAL for STM32).`;
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction: "You are an embedded software engineer.",
@@ -2375,7 +2376,7 @@ Calculated Internal Trace Width: ${intWidth} mils
 Format the output as a Markdown list. Use warnings or emphasis where appropriate.`;
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction: "You are a Senior Hardware Reviewer advising on PCB design.",
@@ -2408,7 +2409,7 @@ Include:
 Format as clean Markdown.`;
 
       const response = await generateContentWithFallback({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction: "You are a hardware Product Manager.",

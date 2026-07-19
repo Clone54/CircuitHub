@@ -20,11 +20,12 @@ import {
 } from 'recharts';
 import { useVLSIDelay } from '../hooks/useVLSIDelay';
 import { useFaultTesting } from '../hooks/useFaultTesting';
+import CMOSGenerator from '../components/calculators/CMOSGenerator';
 
-type TabId = 'stick' | 'delay' | 'fault';
+type TabId = 'cmos' | 'stick' | 'delay' | 'fault';
 
 export default function VLSIToolsView() {
-  const [activeTab, setActiveTab] = useState<TabId>('stick');
+  const [activeTab, setActiveTab] = useState<TabId>('cmos');
 
   // Tab 1: Stick Diagram Synthesizer
   const [expression, setExpression] = useState('Y = ~((A*B)+C)');
@@ -102,6 +103,9 @@ export default function VLSIToolsView() {
 
         {/* Tab Navigation */}
         <div className="flex flex-wrap gap-2 border-b border-navy-light/60 pb-px">
+          <button onClick={() => setActiveTab('cmos')} className={`px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-all border-b-2 ${activeTab === 'cmos' ? 'border-emerald-500 text-emerald-500 bg-emerald-500/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-navy-light/40'}`}>
+            <div className="flex items-center gap-2"><Cpu className="h-4 w-4" /> CMOS Generator</div>
+          </button>
           <button onClick={() => setActiveTab('stick')} className={`px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-all border-b-2 ${activeTab === 'stick' ? 'border-cyan-400 text-cyan-400 bg-cyan-500/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-navy-light/40'}`}>
             <div className="flex items-center gap-2"><Layers className="h-4 w-4" /> Stick Diagram Gen</div>
           </button>
@@ -116,6 +120,11 @@ export default function VLSIToolsView() {
         {/* Tab Content */}
         <div className="animate-fadeIn">
           
+          {/* TAB 0: CMOS Generator */}
+          {activeTab === 'cmos' && (
+            <CMOSGenerator />
+          )}
+
           {/* TAB 1: STICK DIAGRAM */}
           {activeTab === 'stick' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

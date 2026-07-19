@@ -30,7 +30,6 @@ export default function CapstoneWorkspaceView() {
   
   // Modal / Form state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [editingChapter, setEditingChapter] = useState<ThesisChapter | null>(null);
   const [title, setTitle] = useState<string>('');
   const [bullets, setBullets] = useState<string>('');
@@ -103,7 +102,6 @@ export default function CapstoneWorkspaceView() {
     const userId = auth.currentUser?.uid;
     if (!userId) return navigate('/login');
 
-    setIsSaving(true);
     const chapterData = {
       title,
       bullets,
@@ -132,8 +130,6 @@ export default function CapstoneWorkspaceView() {
     } catch (err) {
       console.error("Save Error:", err);
       setError('Error communicating with server.');
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -692,15 +688,9 @@ export default function CapstoneWorkspaceView() {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSaving}
-                  className="px-5 py-2.5 rounded-xl bg-emerald-accent text-navy-dark hover:bg-emerald-accent/90 text-xs sm:text-sm font-bold transition-all shadow-lg hover:shadow-emerald-accent/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
+                  className="px-5 py-2.5 rounded-xl bg-emerald-accent text-navy-dark hover:bg-emerald-accent/90 text-xs sm:text-sm font-bold transition-all shadow-lg hover:shadow-emerald-accent/10"
                 >
-                  {isSaving ? (
-                    <>
-                      <div className="h-4 w-4 mr-2 rounded-full border-2 border-navy-dark border-t-transparent animate-spin" />
-                      Saving...
-                    </>
-                  ) : editingChapter ? 'Save Changes' : 'Create Chapter'}
+                  {editingChapter ? 'Save Changes' : 'Create Chapter'}
                 </button>
               </div>
 

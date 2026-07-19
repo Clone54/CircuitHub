@@ -32,7 +32,7 @@ export default function AboutView() {
             <Zap className="h-5 w-5 text-emerald-accent" /> Interactive Lab Checkers
           </h3>
           <p className="text-xs text-slate-400 leading-relaxed">
-            In standard EEE courses, verifying theoretical circuit outputs manually can lead to delays. CircuitHub features live numerical simulation solvers for 555-timer free running oscillations and operational amplifier feedback networks. Scholars can input their laboratory resistor and capacitor constants to verify physical breadboard wave configurations immediately.
+            In standard EEE-2104 courses, verifying theoretical circuit outputs manually can lead to delays. CircuitHub features live numerical simulation solvers for 555-timer free running oscillations and operational amplifier feedback networks. Scholars can input their laboratory resistor and capacitor constants to verify physical breadboard wave configurations immediately.
           </p>
         </div>
 
