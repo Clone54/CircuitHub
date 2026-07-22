@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { pdf } from '@react-pdf/renderer';
 import { FileText, Loader2 } from 'lucide-react';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import { ReportDocument } from './ReportDocument';
 
 interface IEEEReportButtonProps {
@@ -28,13 +28,13 @@ export function IEEEReportButton({
       const element = document.querySelector(chartSelectors[i]) as HTMLElement;
       if (element) {
         try {
-          const canvas = await html2canvas(element, { 
-            scale: 2, // Higher resolution
+          const dataUrl = await toPng(element, { 
+            pixelRatio: 2, // Higher resolution
             backgroundColor: '#ffffff' // Ensure white background for PDF
           });
           graphs.push({
             title: `Simulation Waveform ${i + 1}`,
-            dataUrl: canvas.toDataURL('image/png')
+            dataUrl
           });
         } catch (err) {
           console.error("Failed to capture chart", err);

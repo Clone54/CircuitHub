@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -20,8 +20,10 @@ import {
   Minimize2,
   Activity,
   Sliders,
-  Play
+  Play,
+  Copy
 } from 'lucide-react';
+import { toBlob } from 'html-to-image';
 import { MatlabDataset } from '../../types';
 import { useSweepAnimation } from '../../hooks/useSweepAnimation';
 
@@ -85,6 +87,37 @@ export const MatlabGraphViewer: React.FC<MatlabGraphViewerProps> = ({
   setIsAnimated = () => {}
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [exportTheme, setExportTheme] = useState<'dark' | 'light' | null>(null);
+  const [isCopying, setIsCopying] = useState(false);
+
+  const handleCopyFigure = (bgType: 'dark' | 'light') => {
+    setExportTheme(bgType);
+    setIsCopying(true);
+    
+    // Wait for React to apply the theme to the DOM
+    setTimeout(async () => {
+      if (chartRef.current) {
+        try {
+          const blob = await toBlob(chartRef.current, {
+            backgroundColor: bgType === 'light' ? '#ffffff' : '#020617',
+            pixelRatio: 2,
+          });
+          if (blob) {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+          }
+          setExportTheme(null);
+          setIsCopying(false);
+        } catch (err) {
+          console.error('Failed to copy figure:', err);
+          setExportTheme(null);
+          setIsCopying(false);
+        }
+      }
+    }, 150);
+  };
 
   // Use animation hook
   const animatedDatasets = useSweepAnimation(datasets, isAnimated, 20);
@@ -214,6 +247,27 @@ export const MatlabGraphViewer: React.FC<MatlabGraphViewerProps> = ({
             <span>Export CSV</span>
           </button>
 
+          <div className="flex items-center border border-navy-light rounded overflow-hidden">
+            <button
+              onClick={() => handleCopyFigure('dark')}
+              disabled={isCopying}
+              className="flex items-center gap-1 px-2 py-1 bg-navy-light/40 hover:bg-navy-light text-slate-200 text-[11px] font-medium transition-all cursor-pointer disabled:opacity-50"
+              title="Copy Figure (Dark Background)"
+            >
+              <Copy className="h-3.5 w-3.5 text-emerald-accent" />
+              <span>Copy (Dark)</span>
+            </button>
+            <div className="w-[1px] h-4 bg-navy-light" />
+            <button
+              onClick={() => handleCopyFigure('light')}
+              disabled={isCopying}
+              className="flex items-center gap-1 px-2 py-1 bg-navy-light/40 hover:bg-slate-200 hover:text-slate-900 text-slate-200 text-[11px] font-medium transition-all cursor-pointer disabled:opacity-50"
+              title="Copy Figure (White Background)"
+            >
+              <span>(Light)</span>
+            </button>
+          </div>
+
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="p-1 rounded border border-navy-light bg-navy-light/40 hover:bg-navy-light text-slate-300 transition-all cursor-pointer"
@@ -225,14 +279,17 @@ export const MatlabGraphViewer: React.FC<MatlabGraphViewerProps> = ({
       </div>
 
       {/* Main Canvas Area */}
-      <div className="p-4 sm:p-6 flex-1 min-h-[380px] sm:min-h-[460px] bg-slate-950/60 relative flex flex-col justify-center">
+      <div 
+        ref={chartRef}
+        className={`p-4 sm:p-6 flex-1 min-h-[380px] sm:min-h-[460px] relative flex flex-col justify-center ${exportTheme === 'light' ? 'bg-white' : 'bg-slate-950/60'}`}
+      >
         {totalPoints === 0 ? (
           <div className="flex flex-col items-center justify-center text-center py-12 px-4 gap-3">
-            <div className="w-12 h-12 rounded-full bg-navy-light/30 border border-navy-light flex items-center justify-center text-slate-400">
-              <Activity className="h-6 w-6 text-emerald-accent" />
+            <div className={`w-12 h-12 rounded-full border flex items-center justify-center ${exportTheme === 'light' ? 'bg-slate-100 border-slate-300 text-slate-500' : 'bg-navy-light/30 border-navy-light text-slate-400'}`}>
+              <Activity className={`h-6 w-6 ${exportTheme === 'light' ? 'text-emerald-600' : 'text-emerald-accent'}`} />
             </div>
-            <div className="text-sm font-semibold text-slate-200">No Data Points to Plot</div>
-            <p className="text-xs text-slate-400 max-w-sm">
+            <div className={`text-sm font-semibold ${exportTheme === 'light' ? 'text-slate-800' : 'text-slate-200'}`}>No Data Points to Plot</div>
+            <p className={`text-xs max-w-sm ${exportTheme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
               Add points manually using the input form or paste a MATLAB script in the Parser mode to render multi-curve plots.
             </p>
           </div>
@@ -240,19 +297,23 @@ export const MatlabGraphViewer: React.FC<MatlabGraphViewerProps> = ({
           <ResponsiveContainer width="100%" height={isFullscreen ? 540 : 420}>
             <ComposedChart margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
               {showGrid && (
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.8} />
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  stroke={exportTheme === 'light' ? '#cbd5e1' : '#1e293b'} 
+                  opacity={0.8} 
+                />
               )}
               <XAxis
                 dataKey="x"
                 type="number"
                 domain={['auto', 'auto']}
-                stroke="#64748b"
-                tick={{ fill: '#94a3b8', fontSize: 11, fontFamily: 'monospace' }}
+                stroke={exportTheme === 'light' ? '#334155' : '#64748b'}
+                tick={{ fill: exportTheme === 'light' ? '#475569' : '#94a3b8', fontSize: 11, fontFamily: 'monospace' }}
                 label={{
                   value: xAxisLabel,
                   position: 'bottom',
                   offset: 10,
-                  fill: '#10b981',
+                  fill: exportTheme === 'light' ? '#059669' : '#10b981',
                   fontSize: 12,
                   fontWeight: 600
                 }}
@@ -261,14 +322,14 @@ export const MatlabGraphViewer: React.FC<MatlabGraphViewerProps> = ({
                 dataKey="y"
                 type="number"
                 domain={['auto', 'auto']}
-                stroke="#64748b"
-                tick={{ fill: '#94a3b8', fontSize: 11, fontFamily: 'monospace' }}
+                stroke={exportTheme === 'light' ? '#334155' : '#64748b'}
+                tick={{ fill: exportTheme === 'light' ? '#475569' : '#94a3b8', fontSize: 11, fontFamily: 'monospace' }}
                 label={{
                   value: yAxisLabel,
                   angle: -90,
                   position: 'insideLeft',
                   offset: -5,
-                  fill: '#10b981',
+                  fill: exportTheme === 'light' ? '#059669' : '#10b981',
                   fontSize: 12,
                   fontWeight: 600
                 }}
@@ -280,11 +341,12 @@ export const MatlabGraphViewer: React.FC<MatlabGraphViewerProps> = ({
                 wrapperStyle={{
                   fontSize: '12px',
                   fontFamily: 'monospace',
-                  paddingBottom: '10px'
+                  paddingBottom: '10px',
+                  color: exportTheme === 'light' ? '#0f172a' : '#f8fafc'
                 }}
               />
-              <ReferenceLine y={0} stroke="#475569" strokeDasharray="2 2" />
-              <ReferenceLine x={0} stroke="#475569" strokeDasharray="2 2" />
+              <ReferenceLine y={0} stroke={exportTheme === 'light' ? '#64748b' : '#475569'} strokeDasharray="2 2" />
+              <ReferenceLine x={0} stroke={exportTheme === 'light' ? '#64748b' : '#475569'} strokeDasharray="2 2" />
 
               {animatedDatasets.map((ds) => {
                 if (ds.plotType === 'discrete') {
