@@ -96,6 +96,16 @@ interface CatalogTool {
 
 const CATALOG_TOOLS: CatalogTool[] = [
   {
+    id: 'matlab-workspace',
+    title: 'MATLAB Multi-Curve Workspace',
+    category: 'academic',
+    description: 'Interactive multi-condition graph generator and AI MATLAB script code parser suite with Recharts engine.',
+    syllabus: 'EEE Lab / Research',
+    icon: Terminal,
+    route: '/matlab-workspace',
+    badge: 'AI Powered MATLAB'
+  },
+  {
     id: 'circuit-tools',
     title: 'Circuit Fundamentals Suite',
     category: 'calculators',

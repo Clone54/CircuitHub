@@ -83,3 +83,23 @@ export interface TestimonialItem {
   order: number;
 }
 
+export interface MatlabDataPoint {
+  x: number;
+  y: number;
+}
+
+export interface MatlabDataset {
+  id: string;
+  name: string;
+  color: string;
+  plotType?: 'continuous' | 'discrete';
+  data: MatlabDataPoint[];
+}
+
+export interface MatlabParseResult {
+  xAxisLabel: string;
+  yAxisLabel: string;
+  datasets: MatlabDataset[];
+  rawScript?: string;
+  isMocked?: boolean;
+}

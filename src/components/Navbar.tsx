@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Cpu, Menu, X, LogIn, LogOut, LayoutDashboard, PlusCircle, Info, Mail, Compass, GraduationCap, Wrench, Calculator, Activity, BookOpen, ArrowLeft } from 'lucide-react';
+import { Cpu, Menu, X, LogIn, LogOut, LayoutDashboard, PlusCircle, Info, Mail, Compass, GraduationCap, Wrench, Calculator, Activity, BookOpen, ArrowLeft, Terminal } from 'lucide-react';
 import { User } from '../types';
 
 interface NavbarProps {
@@ -56,6 +56,10 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
             <Link to="/tools" className={navLinkClass('/tools')}>
               <Wrench className="h-4 w-4" />
               Tools
+            </Link>
+            <Link to="/matlab-workspace" className={navLinkClass('/matlab-workspace')}>
+              <Terminal className="h-4 w-4 text-emerald-accent" />
+              <span>MATLAB</span>
             </Link>
             <Link to="/about" className={navLinkClass('/about')}>
               <Info className="h-4 w-4" />

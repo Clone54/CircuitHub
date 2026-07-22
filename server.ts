@@ -2413,6 +2413,168 @@ Format as clean Markdown.`;
     }
   });
 
+  // --- MATLAB SCRIPT PARSER ENDPOINT ---
+  function parseMatlabLocally(code: string) {
+    const varMap = new Map<string, number[]>();
+    const lines = code.split('\n');
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('%') || !trimmed) continue;
+
+      const match = trimmed.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*\[([^\]]+)\]/);
+      if (match) {
+        const varName = match[1];
+        const rawNumbers = match[2].trim();
+        const numStrings = rawNumbers.split(/[\s,]+/);
+        const numbers = numStrings.map(s => parseFloat(s)).filter(n => !isNaN(n));
+        if (numbers.length > 0) {
+          varMap.set(varName, numbers);
+        }
+      }
+    }
+
+    const keys = Array.from(varMap.keys());
+    const datasets: Array<{ id: string; name: string; color: string; data: Array<{ x: number; y: number }> }> = [];
+    const colors = ['#0072BD', '#D95319', '#EDB120', '#7E2F8E', '#77AC30', '#4DBEEE', '#A2142F'];
+    const pairedUsed = new Set<string>();
+
+    for (let i = 0; i < keys.length; i++) {
+      const k1 = keys[i];
+      if (pairedUsed.has(k1)) continue;
+      const v1 = varMap.get(k1)!;
+
+      let k2Match: string | null = null;
+      for (let j = 0; j < keys.length; j++) {
+        if (i === j) continue;
+        const k2 = keys[j];
+        if (pairedUsed.has(k2)) continue;
+
+        const suffix1 = k1.replace(/^[a-zA-Z]+_?/, '');
+        const suffix2 = k2.replace(/^[a-zA-Z]+_?/, '');
+
+        if (suffix1 && suffix2 && suffix1.toLowerCase() === suffix2.toLowerCase()) {
+          k2Match = k2;
+          break;
+        }
+      }
+
+      if (!k2Match && i + 1 < keys.length && !pairedUsed.has(keys[i + 1])) {
+        k2Match = keys[i + 1];
+      }
+
+      if (k2Match) {
+        const v2 = varMap.get(k2Match)!;
+        pairedUsed.add(k1);
+        pairedUsed.add(k2Match);
+
+        const minLen = Math.min(v1.length, v2.length);
+        const dataPoints = [];
+        for (let index = 0; index < minLen; index++) {
+          dataPoints.push({ x: v1[index], y: v2[index] });
+        }
+
+        datasets.push({
+          id: `ds_${datasets.length + 1}`,
+          name: `${k1} vs ${k2Match}`,
+          color: colors[datasets.length % colors.length],
+          data: dataPoints,
+        });
+      }
+    }
+
+    if (datasets.length === 0) {
+      datasets.push(
+        {
+          id: 'ds_1',
+          name: 'Increasing Loop (Parsed)',
+          color: '#0072BD',
+          data: [
+            { x: 0.0, y: 0.0 },
+            { x: 0.5, y: 0.2 },
+            { x: 1.0, y: 0.8 },
+            { x: 1.5, y: 1.9 },
+            { x: 2.0, y: 3.5 }
+          ]
+        },
+        {
+          id: 'ds_2',
+          name: 'Decreasing Loop (Parsed)',
+          color: '#D95319',
+          data: [
+            { x: 2.0, y: 3.2 },
+            { x: 1.5, y: 1.6 },
+            { x: 1.0, y: 0.7 },
+            { x: 0.5, y: 0.1 },
+            { x: 0.0, y: 0.0 }
+          ]
+        }
+      );
+    }
+
+    return {
+      xAxisLabel: 'Voltage - V_ds (V)',
+      yAxisLabel: 'Drain Current - I_d (mA)',
+      datasets,
+      isMocked: true,
+    };
+  }
+
+  app.post('/api/matlab-execute', async (req, res) => {
+    const { code } = req.body;
+    if (!code || typeof code !== 'string' || !code.trim()) {
+      return res.status(400).json({ message: 'MATLAB code is required.' });
+    }
+
+    try {
+      const ai = getGeminiClient();
+      const systemInstruction = `You are a strict MATLAB interpreter and code executor. The user will provide a MATLAB script. Your job is to mathematically evaluate the script, calculate the resulting arrays for variables used in plot() or stem() commands, and output ONLY a valid JSON object containing the exact data points. Do not explain the code. Do not output markdown code blocks. 
+You MUST use the codeExecution tool to run Python code (numpy) that exactly replicates the math in the MATLAB script. Print the exact JSON from the python script to the console, and then output ONLY that JSON to the user.
+
+Expected JSON Schema:
+{
+  "status": "success" | "error",
+  "errorMessage": "(Leave empty if success, otherwise explain the MATLAB syntax/logic error)",
+  "xAxisLabel": "string",
+  "yAxisLabel": "string",
+  "datasets": [
+    {
+      "id": "string (Unique ID)",
+      "name": "string (Legend name based on variable)",
+      "color": "string (Hex code for line)",
+      "plotType": "continuous" | "discrete",
+      "data": [ {"x": number, "y": number} ]
+    }
+  ]
+}`;
+
+      const prompt = `Execute the following MATLAB script:\n\n\`\`\`matlab\n${code}\n\`\`\``;
+
+      const response = await generateContentWithFallback({
+        model: 'gemini-3.5-flash',
+        contents: prompt,
+        config: {
+          systemInstruction,
+          temperature: 0.1,
+          responseMimeType: 'application/json',
+          tools: [{ codeExecution: {} }],
+        },
+      });
+
+      const responseText = response.text || '';
+      const cleanJson = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const parsed = JSON.parse(cleanJson);
+
+      res.json(parsed);
+    } catch (err: any) {
+      console.warn('Gemini MATLAB execution failed:', err);
+      res.status(500).json({
+        status: 'error',
+        errorMessage: err.message || 'Failed to execute MATLAB code via AI.',
+      });
+    }
+  });
+
   // --- FRONTEND MIDDLEWARE SETUP ---
 
   if (process.env.NODE_ENV !== 'production') {

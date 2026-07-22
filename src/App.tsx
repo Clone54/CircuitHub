@@ -47,6 +47,7 @@ import ACMachinesView from './views/ACMachinesView';
 import MachineDrivesView from './views/MachineDrivesView';
 import IIoTToolsView from './views/IIoTToolsView';
 import ComputationalToolsView from './views/ComputationalToolsView';
+import MatlabWorkspaceView from './views/MatlabWorkspaceView';
 import MeasurementToolsView from './views/MeasurementToolsView';
 import VLSIToolsView from './views/VLSIToolsView';
 import HardwareShopView from './views/HardwareShopView';
@@ -396,6 +397,8 @@ export default function App() {
               <Route path="/machine-tools/ac-machines" element={<ACMachinesView />} />
               <Route path="/machine-drives" element={<MachineDrivesView />} />
               <Route path="/computational-tools" element={<ComputationalToolsView />} />
+              <Route path="/matlab-workspace" element={<MatlabWorkspaceView />} />
+              <Route path="/matlab" element={<MatlabWorkspaceView />} />
               <Route path="/power-tools/transmission-design" element={<TransmissionDesignView />} />
               <Route path="/power-tools/system-analysis" element={<PowerSystemsIIView />} />
               <Route path="/power-tools/stability-control" element={<PowerStabilityView />} />
