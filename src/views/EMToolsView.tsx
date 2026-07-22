@@ -354,7 +354,7 @@ export default function EMToolsView() {
                 {solverResult && (
                   <div className="bg-navy-dark border border-emerald-accent/20 rounded-2xl p-6 md:p-8 animate-fadeIn max-h-[500px] overflow-y-auto">
                     <div className="prose prose-invert prose-emerald max-w-none prose-sm font-sans">
-                      <Markdown>
+                      <Markdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
                         {solverResult}
                       </Markdown>
                     </div>

@@ -139,67 +139,13 @@ function generateLocalAcademicDraft(title: string, bullets: string): string {
   return draft;
 }
 
-// Helper to convert any residual LaTeX equations into human-friendly professional plaintext/unicode math
+// Helper to standardize LaTeX equation delimiters for KaTeX rendering
 function cleanLatexToProfessional(text: string): string {
   if (!text) return '';
-
   let cleaned = text;
-
-  // Replace block and inline math delimiters
-  cleaned = cleaned.replace(/\\\[/g, '\n');
-  cleaned = cleaned.replace(/\\\]/g, '\n');
-  cleaned = cleaned.replace(/\\\(/g, ' ');
-  cleaned = cleaned.replace(/\\\)/g, ' ');
-  cleaned = cleaned.replace(/\$\$/g, '');
-  cleaned = cleaned.replace(/\$/g, '');
-
-  // Keep replacing until no more occurrences of \frac are found
-  let oldCleaned;
-  do {
-    oldCleaned = cleaned;
-    // Match \frac{num}{den}
-    cleaned = cleaned.replace(/\\frac\s*{(.*?)}\s*{(.*?)}/g, '($1) / ($2)');
-  } while (cleaned !== oldCleaned);
-
-  // Match \sqrt{content}
-  cleaned = cleaned.replace(/\\sqrt\s*{(.*?)}/g, 'sqrt($1)');
-  
-  // Match super/subscripts like R_{in} -> R_in
-  cleaned = cleaned.replace(/_{(.*?)}/g, '_$1');
-  cleaned = cleaned.replace(/\^{(.*?)}/g, '^$1');
-
-  // Common greek symbols and operators
-  const replacements: { [key: string]: string } = {
-    '\\omega_0': 'ω0',
-    '\\omega': 'ω',
-    '\\pi': 'π',
-    '\\times': ' * ',
-    '\\cdot': ' * ',
-    '\\Delta': 'Δ',
-    '\\theta': 'θ',
-    '\\Omega': 'Ω',
-    '\\mu': 'μ',
-    '\\alpha': 'α',
-    '\\beta': 'β',
-    '\\gamma': 'γ',
-    '\\lambda': 'λ',
-    '\\eta': 'η',
-    '\\ge': '>=',
-    '\\le': '<=',
-    '\\pm': '±',
-    '\\approx': '≈',
-    '\\infty': '∞',
-  };
-
-  for (const [key, val] of Object.entries(replacements)) {
-    // Escape backslashes in key for RegExp
-    const escapedKey = key.replace(/\\/g, '\\\\');
-    cleaned = cleaned.replace(new RegExp(escapedKey, 'g'), val);
-  }
-
-  // Double-check backslashes that might remain
-  cleaned = cleaned.replace(/\\/g, '');
-
+  // Convert \[ \] to $$ $$ and \( \) to $ $ so KaTeX remarkMath/rehypeKatex parses them cleanly
+  cleaned = cleaned.replace(/\\\[/g, '$$').replace(/\\\]/g, '$$');
+  cleaned = cleaned.replace(/\\\(/g, '$').replace(/\\\)/g, '$');
   return cleaned;
 }
 
@@ -698,11 +644,18 @@ You MUST respond in a strict JSON format matching this schema:
 When answering, provide step-by-step mathematical derivations where applicable. Do not answer questions outside of electrical engineering, computer science, or physics. Keep responses concise, clear, and highly educational.
 
 CRITICAL EQUATION FORMATTING INSTRUCTION:
-You MUST output all mathematical equations and formulas in human-readable PROFESSIONAL MODE (plain-text/unicode math format) instead of LaTeX or math-block formatting.
-- Absolutely DO NOT use LaTeX blocks ($$ ... $$), backslashes, or inline LaTeX delimiters like \\( ... \\) or \\[ ... \\].
-- Absolutely DO NOT use any LaTeX syntax like \\frac, \\sqrt, \\omega, etc.
-- Always write formulas in elegant, clear plain-text with standard operators and standard symbols (e.g., use "ω" or "omega" instead of "\\omega", "π" or "pi" instead of "\\pi", "sqrt(L * C)" instead of "\\sqrt{LC}", and "A_v = 1 + (Rf / R1)" instead of inline LaTeX).
-- Use professional unicode mathematical characters where appropriate (e.g. Δ, θ, Ω, μ, α, β, λ, η, ±, ≈, >=, <=) to make formulas look highly polished and professional.
+You MUST output all mathematical equations, formulas, and derivations in professional typeset LaTeX notation.
+- Always use display math blocks $$ ... $$ on their own lines for main equations, step-by-step derivations, integrals, fraction expressions, trigonometric products, and multiline transformations.
+- Always use inline math delimiters $ ... $ for inline variables, parameters, and individual symbols (e.g., $p(t)$, $P$, $V_m$, $I_m$, $\omega$, $\theta_v$).
+- Use standard LaTeX math commands:
+  - Fractions: \frac{a}{b}
+  - Integrals: \int_{0}^{T}
+  - Trigonometry & Functions: \cos(\omega t + \theta_v), \sin(\omega t), \exp(-a t)
+  - Roots: \sqrt{L C}
+  - Greek letters: \omega, \theta_v, \theta_i, \pi, \Delta, \Omega, \mu, \alpha, \beta, \lambda, \phi
+  - Subscripts and Superscripts: V_m, I_m, \theta_v, e^{-at}, t^2
+- Format step-by-step derivations clearly line-by-line using LaTeX display blocks $$ ... $$ so each derivation step renders in beautiful mathematical typography.
+- Never write linear plain-text string formulas like "P = (1/T) * ∫ [from 0 to T] p(t) dt" or "p(t) = 0.5 * V_m * I_m * [ ... ]". Always use LaTeX math blocks.
 
 Offer 2 suggested follow-up questions at the very end of your response, separated by a line and formatted exactly as:
 [SUGGESTION: First follow up question?]
@@ -1440,10 +1393,9 @@ The user will provide a spatial Vector Field and an operation (Divergence, Curl,
 Your task is to provide a step-by-step mathematical derivation of the requested operation using partial derivatives.
 
 CRITICAL FORMATTING RULES:
-1. Do NOT use LaTeX block or inline formulas (e.g. do NOT use $$, $, \\frac, \\partial, etc.).
-2. Always write formulas in elegant, clear plain-text with standard operators and standard symbols (e.g., use "∇·E" or "grad E" instead of LaTeX, "∂Ez/∂y" instead of "\\frac{\\partial E_z}{\\partial y}", and "ax, ay, az" for unit vectors).
-3. Use professional unicode mathematical characters where appropriate (e.g. ∇, ∂, ·, ×, ², ³, Δ, θ, Ω, μ, α, β, λ, η, ±, ≈, >=, <=) to make formulas look highly polished and professional.
-4. Always conclude by stating the physical significance of the result (e.g. "Since Divergence is zero, this field is solenoidal / satisfies Gauss's Law for a charge-free region").`;
+1. Always output all mathematical steps, equations, and derivations in professional LaTeX formatting. Use $$ ... $$ display blocks for main equation derivations and $ ... $ for inline terms.
+2. Use standard LaTeX notation (e.g. \nabla \cdot \vec{E}, \frac{\partial E_z}{\partial y}, \hat{a}_x, \hat{a}_y, \hat{a}_z).
+3. Always conclude by stating the physical significance of the result (e.g. "Since Divergence is zero, this field is solenoidal / satisfies Gauss's Law for a charge-free region").`;
 
       const ai = getGeminiClient();
 

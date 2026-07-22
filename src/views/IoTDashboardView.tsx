@@ -28,6 +28,8 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 interface LoadPoint {
   hour: number;
@@ -551,7 +553,7 @@ export default function IoTDashboardView() {
 
                     {/* Executive Analysis */}
                     <div className="text-slate-300 text-sm leading-relaxed markdown-body">
-                      <ReactMarkdown>{aiResult.analysis}</ReactMarkdown>
+                      <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{aiResult.analysis}</ReactMarkdown>
                     </div>
 
                     {/* Recommendations List */}

@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Sparkles, AlertCircle, RefreshCw, ChevronDown, BookOpen } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { ChatMessage } from '../types';
 
 export default function ChatAssistant() {
@@ -197,13 +200,19 @@ export default function ChatAssistant() {
                   {msg.role === 'user' ? 'You' : 'AI Assistant'}
                 </span>
                 <div
-                  className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed whitespace-pre-wrap ${
+                  className={`rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed overflow-x-auto ${
                     msg.role === 'user'
-                      ? 'bg-emerald-accent text-navy-dark font-medium rounded-tr-none'
-                      : 'bg-navy-light/50 text-slate-200 border border-navy-light/60 rounded-tl-none'
+                      ? 'bg-emerald-accent text-navy-dark font-medium rounded-tr-none whitespace-pre-wrap'
+                      : 'bg-navy-light/50 text-slate-200 border border-navy-light/60 rounded-tl-none markdown-body prose prose-invert max-w-none text-xs prose-p:leading-relaxed'
                   }`}
                 >
-                  {msg.content}
+                  {msg.role === 'assistant' ? (
+                    <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                      {msg.content}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
               </div>
             ))}

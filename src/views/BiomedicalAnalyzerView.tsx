@@ -29,6 +29,8 @@ import {
 } from 'recharts';
 import Papa from 'papaparse';
 import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 interface ECGPoint {
   time: number; // millisecond
@@ -696,7 +698,7 @@ export default function BiomedicalAnalyzerView() {
 
                       {/* Clinical summary markdown */}
                       <div className="text-slate-300 text-sm leading-relaxed markdown-body">
-                        <ReactMarkdown>{aiOutput.clinicalSummary}</ReactMarkdown>
+                        <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{aiOutput.clinicalSummary}</ReactMarkdown>
                       </div>
 
                       {/* Filter/Hardware design checklist */}

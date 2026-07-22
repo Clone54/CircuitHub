@@ -18,6 +18,8 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { ThesisChapter } from '../types';
 import { auth, db } from '../lib/firebase';
 import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
@@ -530,7 +532,7 @@ export default function CapstoneWorkspaceView() {
 
                     {activeChapter.draftContent ? (
                       <div className="markdown-body text-xs sm:text-sm text-slate-300 leading-relaxed bg-navy-dark/30 border border-navy-light/40 p-4 rounded-xl max-h-[40vh] overflow-y-auto">
-                        <ReactMarkdown>{activeChapter.draftContent}</ReactMarkdown>
+                        <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{activeChapter.draftContent}</ReactMarkdown>
                       </div>
                     ) : (
                       <div className="text-center py-10 px-4 bg-navy-dark/40 rounded-xl border border-dashed border-navy-light/60">

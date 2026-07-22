@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { 
   GraduationCap, 
   Send, 
@@ -297,8 +299,8 @@ Feel free to ask me questions, request **step-by-step mathematical derivations**
                         : 'bg-emerald-accent text-navy-dark font-medium'
                     }`}>
                       {isTutor ? (
-                        <div className="markdown-body prose prose-invert prose-emerald max-w-none text-slate-200 prose-p:leading-relaxed prose-pre:bg-black/40 prose-pre:border prose-pre:border-navy-light">
-                          <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        <div className="markdown-body prose prose-invert prose-emerald max-w-none text-slate-200 prose-p:leading-relaxed prose-pre:bg-black/40 prose-pre:border prose-pre:border-navy-light overflow-x-auto">
+                          <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{msg.content}</ReactMarkdown>
                         </div>
                       ) : (
                         <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -364,7 +366,7 @@ Feel free to ask me questions, request **step-by-step mathematical derivations**
             </form>
             <div className="mt-2 text-[10px] text-slate-500 text-center flex items-center justify-center gap-1.5">
               <Terminal className="h-3.5 w-3.5 text-slate-600" />
-              <span>Equations are rendered in human-friendly professional plaintext and Unicode mathematical notation</span>
+              <span>Equations are rendered in professional typeset LaTeX mathematical notation ($$ ... $$)</span>
             </div>
           </div>
 
